@@ -1,21 +1,31 @@
 import { Page, Locator, expect, Response } from "@playwright/test";
 import { BaseActions } from "../utils/BaseActions";
+import { Assertions } from "../assertions/Assertions";
 
 export abstract class BasePage {
     protected readonly page: Page;
     protected readonly actions: BaseActions;
+    protected readonly pageTitle: Locator;
+    protected readonly loaderSpinner: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.actions = new BaseActions(page);
-    }
-
-    async waitForPageLoad(): Promise<void> {
-        await this.page.waitForLoadState("domcontentloaded");
+        this.pageTitle = page.locator("h6.oxd-text--h6");
+        this.loaderSpinner = page.locator(".oxd-loading-spinner");
     }
 
     getCurrentUrl(): string {
         return this.page.url();
+    }
+
+    /**
+     * Validates that the current page title matches the expected value.
+     */
+    async isAtPageWithTitle(expectedTitle: string): Promise<void> {
+        const actualTitle = await this.actions.getText(this.pageTitle, "Page title");
+
+        Assertions.expectNormalizedText(actualTitle, expectedTitle);
     }
 
     /**
@@ -65,6 +75,22 @@ export abstract class BasePage {
         } catch (error) {
             console.error(`❌ Failed to navigate to ${targetUrl}`, error);
             throw error;
+        }
+    }
+
+    async waitForPageLoad(): Promise<void> {
+        await this.page.waitForLoadState("domcontentloaded");
+    }
+
+    async waitForLoaderToDisappear(timeout = 10000): Promise<void> {
+        try {
+            await this.loaderSpinner.waitFor({
+                state: "hidden",
+                timeout,
+            });
+        } catch {
+            // Spinner may not appear at all — that's fine
+            console.log("ℹ️ Loading spinner not present or already gone");
         }
     }
 

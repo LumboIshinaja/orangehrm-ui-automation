@@ -1,12 +1,12 @@
 import { Page, Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import { routes } from "../config/routes";
-import { Assertions } from "../assertions/Assertions";
 
 export class LoginPage extends BasePage {
     private readonly usernameField: Locator;
     private readonly passwordField: Locator;
     private readonly loginButton: Locator;
+    private readonly credentialsRequiredError: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -14,6 +14,7 @@ export class LoginPage extends BasePage {
         this.usernameField = page.locator("input[placeholder='Username']");
         this.passwordField = page.locator("input[placeholder='Password']");
         this.loginButton = page.locator(".orangehrm-login-button");
+        this.credentialsRequiredError = page.locator("span.oxd-input-field-error-message");
     }
 
     /**
@@ -45,5 +46,9 @@ export class LoginPage extends BasePage {
      */
     async clickLogin(): Promise<void> {
         await this.actions.click(this.loginButton, "Login button");
+    }
+
+    async isRequiredFieldErrorVisible(): Promise<boolean> {
+        return await this.credentialsRequiredError.first().isVisible();
     }
 }

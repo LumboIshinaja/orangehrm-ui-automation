@@ -98,11 +98,7 @@ export class BaseActions {
      */
     async waitForVisibility(locator: Locator, timeout = 5000): Promise<void> {
         try {
-            console.log(`⏳ Waiting for visibility`);
-
             await locator.waitFor({ state: "visible", timeout });
-
-            console.log(`👁️ Element is visible`);
         } catch (error) {
             handleError(error, `Element did not become visible within ${timeout}ms`);
         }
