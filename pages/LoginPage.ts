@@ -11,8 +11,8 @@ export class LoginPage extends BasePage {
     constructor(page: Page) {
         super(page);
 
-        this.usernameField = page.locator("input[placeholder='Username']");
-        this.passwordField = page.locator("input[placeholder='Password']");
+        this.usernameField = page.locator("input[name='username']");
+        this.passwordField = page.locator("input[type='password']");
         this.loginButton = page.locator(".orangehrm-login-button");
         this.credentialsRequiredError = page.locator("span.oxd-input-field-error-message");
     }
