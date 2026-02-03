@@ -9,13 +9,7 @@ export default defineConfig([
     // Global ignores
     // --------------------------------------------------
     {
-        ignores: [
-            "node_modules",
-            "dist",
-            "playwright-report",
-            "test-results",
-            "blob-report",
-        ],
+        ignores: ["node_modules", "dist", "playwright-report", "test-results", "blob-report"],
     },
 
     // --------------------------------------------------
@@ -60,6 +54,9 @@ export default defineConfig([
             // Reduce early-stage noise
             "playwright/no-conditional-expect": "warn",
             "playwright/no-skipped-test": "warn",
+
+            // Assertions are abstracted (pages/helpers), this rule is not applicable
+            "playwright/expect-expect": "off",
         },
     },
 
