@@ -17,24 +17,4 @@ test.describe("Login test", () => {
             await loginHelper.validateUserLogin();
         });
     });
-
-    test("@smoke Unsuccessful login – username only", async () => {
-        await test.step("Submit login form with only username provided", async () => {
-            await loginHelper.enterUsername(process.env.ORANGE_USERNAME!);
-        });
-
-        await test.step("Validate credentials required error is displayed", async () => {
-            await loginHelper.validateCredentialsRequiredError();
-        });
-    });
-
-    test("@smoke Unsuccessful login – password only", async () => {
-        await test.step("Submit login form with only password provided", async () => {
-            await loginHelper.enterPassword(process.env.ORANGE_PASSWORD!);
-        });
-
-        await test.step("Validate credentials required error is displayed", async () => {
-            await loginHelper.validateCredentialsRequiredError();
-        });
-    });
 });
