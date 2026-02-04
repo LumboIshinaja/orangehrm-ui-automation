@@ -1,0 +1,55 @@
+import { Page } from "@playwright/test";
+import { PageObjectManager } from "../../managers/PageObjectManager";
+import { EmployeesPage } from "../../pages/EmployeesPage";
+import { CreateEmployeePage } from "../../pages/CreateEmployeePage";
+
+export class EmployeeHelper {
+    private readonly pm: PageObjectManager;
+    private readonly employeesPage: EmployeesPage;
+    private readonly createEmployeePage: CreateEmployeePage;
+
+    constructor(page: Page) {
+        this.pm = new PageObjectManager(page);
+        this.employeesPage = this.pm.getPage(EmployeesPage);
+        this.createEmployeePage = this.pm.getPage(CreateEmployeePage);
+    }
+
+    /**
+     * Creates a new employee by following the full UI flow.
+     *
+     * @param firstName - Employee first name
+     * @param middleName - Employee middle name (optional)
+     * @param lastName - Employee last name
+     * @param username - Login username for employee
+     * @param password - Login password for employee
+     */
+    async createEmployee(
+        firstName: string,
+        middleName: string | null,
+        lastName: string,
+        username: string,
+        password: string,
+    ): Promise<void> {
+        console.log("👤 Starting create employee flow");
+
+        await this.employeesPage.navigateToEmployeeList();
+        await this.employeesPage.clickAddEmployee();
+
+        await this.createEmployeePage.fillFirstName(firstName);
+
+        if (middleName) {
+            await this.createEmployeePage.fillMiddleName(middleName);
+        }
+
+        await this.createEmployeePage.fillLastName(lastName);
+
+        await this.createEmployeePage.clickDetailsCheckbox();
+        await this.createEmployeePage.fillUsername(username);
+        await this.createEmployeePage.fillPassword(password);
+        await this.createEmployeePage.fillConfirmPassword(password);
+
+        await this.createEmployeePage.clickSave();
+
+        console.log("✅ Employee creation flow completed");
+    }
+}

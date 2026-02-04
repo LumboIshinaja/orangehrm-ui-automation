@@ -7,4 +7,10 @@ export const routes = {
     dashboard: {
         overview: `${WEB_ROOT}/dashboard/index`,
     },
+    employeeList: {
+        pim: `${WEB_ROOT}/pim/viewEmployeeList`,
+    },
+    addEmployee: {
+        pim: `${WEB_ROOT}/pim/addEmployee`,
+    },
 } as const;
