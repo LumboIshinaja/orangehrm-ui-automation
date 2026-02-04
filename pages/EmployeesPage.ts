@@ -1,6 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import { routes } from "../config/routes";
+import { pageTitleValues } from "../constants/AppConstants";
 
 export class EmployeesPage extends BasePage {
     private readonly employeeNameField: Locator;
@@ -13,13 +14,18 @@ export class EmployeesPage extends BasePage {
     }
 
     /**
+     * This method verifies if user is on correct page
+     */
+    async isAt(): Promise<void> {
+        await this.waitForLoaderToDisappear();
+        await this.isAtPageWithTitle(pageTitleValues.employeesTitle);
+    }
+
+    /**
      * Navigates the user to the Employee List page.
      */
     async navigateToEmployeeList(): Promise<void> {
-        await super.navigate(routes.employeeList.pim, {
-            readyLocator: this.employeeNameField,
-            expectUrl: /employeeList\/pim/,
-        });
+        await super.navigate(routes.pim.employeeList);
     }
 
     /**

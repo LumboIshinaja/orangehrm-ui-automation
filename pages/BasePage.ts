@@ -30,26 +30,22 @@ export abstract class BasePage {
 
     /**
      * Navigates to a route or absolute URL and waits until the page is usable.
-     * SPA-aware and suitable for OrangeHRM routing.
      */
     async navigate(
         pathOrUrl: string,
         options?: {
             timeout?: number;
             readyLocator?: Locator;
-            expectUrl?: string | RegExp;
             checkHttpOk?: boolean;
         },
     ): Promise<Response | null> {
-        const { timeout = 30000, readyLocator, expectUrl, checkHttpOk = true } = options ?? {};
+        const { timeout = 30000, readyLocator, checkHttpOk = true } = options ?? {};
 
         const targetUrl = this.toAbsoluteUrl(pathOrUrl);
         console.log(`➡️ Navigating to [${targetUrl}]`);
 
-        let response: Response | null = null;
-
         try {
-            response = await this.page.goto(targetUrl, {
+            const response = await this.page.goto(targetUrl, {
                 waitUntil: "commit",
                 timeout,
             });
@@ -60,12 +56,8 @@ export abstract class BasePage {
                 );
             }
 
-            if (expectUrl) {
-                await expect(this.page).toHaveURL(expectUrl, { timeout });
-            }
-
             if (readyLocator) {
-                await expect(readyLocator).toBeVisible({ timeout });
+                await this.actions.waitForVisibility(readyLocator, timeout);
             } else {
                 await this.bestEffortSpaSettle(timeout);
             }

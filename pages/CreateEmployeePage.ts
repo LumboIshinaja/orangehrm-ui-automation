@@ -1,6 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import { routes } from "../config/routes";
+import { pageTitleValues } from "../constants/AppConstants";
 
 export class CreateEmployeePage extends BasePage {
     private readonly firstNameField: Locator;
@@ -29,13 +30,18 @@ export class CreateEmployeePage extends BasePage {
     }
 
     /**
+     * This method verifies if user is on correct page
+     */
+    async isAt(): Promise<void> {
+        await this.waitForLoaderToDisappear();
+        await this.isAtPageWithTitle(pageTitleValues.employeesTitle);
+    }
+
+    /**
      * Navigates the user to the Add New Employee page.
      */
     async navigateToAddEmployee(): Promise<void> {
-        await super.navigate(routes.addEmployee.pim, {
-            readyLocator: this.firstNameField,
-            expectUrl: /pim\/addEmployee/,
-        });
+        await super.navigate(routes.pim.addEmployee);
     }
 
     /**
@@ -84,7 +90,11 @@ export class CreateEmployeePage extends BasePage {
      * Fills the Confirm Password input field.
      */
     async fillConfirmPassword(confirmPassword: string): Promise<void> {
-        await this.actions.fill(this.passwordField, confirmPassword, "Password input");
+        await this.actions.fill(
+            this.confirmPasswordField,
+            confirmPassword,
+            "Confirm Password input",
+        );
     }
 
     /**
