@@ -2,58 +2,84 @@ import { Page } from "@playwright/test";
 import { PageObjectManager } from "../../managers/PageObjectManager";
 import { EmployeesPage } from "../../pages/EmployeesPage";
 import { CreateEmployeePage } from "../../pages/CreateEmployeePage";
+import { EmployeePersonalDetailsPage } from "../../pages/EmployeePersonalDetailsPage";
 
 export type CreateEmployeeData = {
     firstName: string;
-    middleName?: string;
+    middleName: string;
     lastName: string;
     username: string;
     password: string;
+    driverLicenceNumber: string;
+    licenceExpiryDate: string;
+    dateOfBirth: string;
+    testField: string;
 };
 
 export class EmployeeHelper {
     private readonly pm: PageObjectManager;
     private readonly employeesPage: EmployeesPage;
     private readonly createEmployeePage: CreateEmployeePage;
+    private readonly employeePersDetPage: EmployeePersonalDetailsPage;
 
     constructor(page: Page) {
         this.pm = new PageObjectManager(page);
         this.employeesPage = this.pm.getPage(EmployeesPage);
         this.createEmployeePage = this.pm.getPage(CreateEmployeePage);
+        this.employeePersDetPage = this.pm.getPage(EmployeePersonalDetailsPage);
     }
 
     /**
-     * Creates a new employee by completing the full UI flow.
+     * This method navigates user to Employee list page
      */
+    async navigateToEmployeeList(): Promise<void> {
+        await this.employeesPage.navigateToEmployeeList();
+        await this.employeesPage.isAt();
+    }
+
     async createEmployee(data: CreateEmployeeData): Promise<void> {
         console.log("👤 Starting create employee flow");
 
-        // Navigate to employee list
-        await this.employeesPage.navigateToEmployeeList();
-        await this.employeesPage.isAt();
-
-        // Open create employee form
+        // STEP 1: Create employee
         await this.employeesPage.clickAddEmployee();
 
-        // Fill personal details
         await this.createEmployeePage.fillFirstName(data.firstName);
 
-        if (data.middleName) {
-            await this.createEmployeePage.fillMiddleName(data.middleName);
-        }
+        await this.createEmployeePage.fillMiddleName(data.middleName);
 
         await this.createEmployeePage.fillLastName(data.lastName);
-
-        // Enable login details
         await this.createEmployeePage.clickDetailsCheckbox();
-
-        // Fill login credentials
         await this.createEmployeePage.fillUsername(data.username);
         await this.createEmployeePage.fillPassword(data.password);
         await this.createEmployeePage.fillConfirmPassword(data.password);
-
-        // Save employee
         await this.createEmployeePage.clickSave();
+
+        // STEP 2: Personal details
+        await this.employeePersDetPage.isAt();
+
+        await this.employeePersDetPage.fillDriverLicence(data.driverLicenceNumber);
+
+        await this.employeePersDetPage.fillLicenceExpiryDate(data.licenceExpiryDate);
+
+        // Hardcoded reference dropdowns
+        await this.employeePersDetPage.selectNationality("Serbian");
+        await this.employeePersDetPage.selectMaritalStatus("Married");
+
+        if (data.dateOfBirth) {
+            await this.employeePersDetPage.fillDateOfBirth(data.dateOfBirth);
+        }
+
+        await this.employeePersDetPage.clickMaleCheckbox();
+        await this.employeePersDetPage.clickRequiredSave();
+
+        // STEP 3: Custom fields
+        await this.employeePersDetPage.selectBloodType("B-");
+
+        if (data.testField) {
+            await this.employeePersDetPage.fillTestField(data.testField);
+        }
+
+        await this.employeePersDetPage.clickCustomSave();
 
         console.log("✅ Employee creation flow completed");
     }

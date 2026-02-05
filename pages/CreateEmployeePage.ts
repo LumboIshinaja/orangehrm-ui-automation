@@ -19,13 +19,15 @@ export class CreateEmployeePage extends BasePage {
         this.middleNameField = page.locator("input[name='middleName']");
         this.lastNameField = page.locator("input[name='lastName']");
         this.createLoginDetailsCheckbox = page.locator(".oxd-switch-input");
-        this.usernameField = page.locator("input.oxd-input--active[autocomplete='off']").first();
-        this.passwordField = page
-            .locator("input.oxd-input--active[autocomplete='off'][type='password']")
-            .first();
-        this.confirmPasswordField = page
-            .locator("input.oxd-input--active[autocomplete='off'][type='password']")
-            .last();
+        this.usernameField = page.locator(
+            "//label[normalize-space()='Username']/ancestor::div[2]//input",
+        );
+        this.passwordField = page.locator(
+            "//label[normalize-space()='Password']/ancestor::div[2]//input",
+        );
+        this.confirmPasswordField = page.locator(
+            "//label[normalize-space()='Confirm Password']/ancestor::div[2]//input",
+        );
         this.saveButton = page.locator("//button[normalize-space()='Save']");
     }
 
@@ -102,5 +104,6 @@ export class CreateEmployeePage extends BasePage {
      */
     async clickSave(): Promise<void> {
         await this.actions.click(this.saveButton, "Save button");
+        await this.waitForLoaderToDisappear();
     }
 }

@@ -10,7 +10,27 @@ export class DataGenerator {
     }
 
     static password(length = 12): string {
-        return faker.internet.password({ length });
+        if (length < 4) {
+            throw new Error("Password length must be at least 4");
+        }
+
+        const lower = faker.string.alpha({ length: 1, casing: "lower" });
+        const upper = faker.string.alpha({ length: 1, casing: "upper" });
+        const digit = faker.number.int({ min: 0, max: 9 }).toString();
+
+        const remainingLength = length - 3;
+
+        const remaining = faker.internet.password({
+            length: remainingLength,
+            memorable: false,
+            pattern: /[A-Za-z!@#$%^&*]/,
+        });
+
+        const password = faker.helpers
+            .shuffle([lower, upper, digit, ...remaining.split("")])
+            .join("");
+
+        return password;
     }
 
     static firstName(): string {

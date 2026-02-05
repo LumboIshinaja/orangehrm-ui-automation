@@ -44,23 +44,27 @@ export class BaseActions {
      * @param locator - Locator of the input element.
      * @param value - Value to be entered into the input field.
      * @param elementName - Human-readable name of the element for logging.
-     * @param timeout - Maximum time to wait for the element to become visible.
+     * @typingDelay - Default value at 30
      */
     async fill(
         locator: Locator,
         value: string,
         elementName: string,
-        timeout = 5000,
+        typingDelay = 30,
     ): Promise<void> {
         try {
-            console.log(`➡️ Filling [${elementName}] with value [${value}]`);
+            console.log(`➡️ Filling [${elementName}]`);
 
-            await this.waitForVisibility(locator, timeout);
-            await locator.fill(value);
+            await this.waitForVisibility(locator);
+
+            await locator.click({ force: true });
+            await locator.clear();
+
+            await locator.pressSequentially(value, { delay: typingDelay });
 
             console.log(`✅ Filled [${elementName}]`);
         } catch (error) {
-            handleError(error, `Failed to fill element [${elementName}] with value [${value}]`);
+            handleError(error, `Failed to fill [${elementName}]`);
         }
     }
 
@@ -96,9 +100,10 @@ export class BaseActions {
      * @param locator - Locator of the element to wait for.
      * @param timeout - Maximum time to wait for the element to become visible.
      */
-    async waitForVisibility(locator: Locator, timeout = 5000): Promise<void> {
+    async waitForVisibility(locator: Locator, timeout = 10000): Promise<void> {
         try {
             await locator.waitFor({ state: "visible", timeout });
+            await locator.waitFor({ state: "attached", timeout });
         } catch (error) {
             handleError(error, `Element did not become visible within ${timeout}ms`);
         }
