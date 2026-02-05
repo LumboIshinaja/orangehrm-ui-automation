@@ -70,20 +70,6 @@ export abstract class BasePage {
         }
     }
 
-    async waitForPageLoad(): Promise<void> {
-        await this.page.waitForLoadState("domcontentloaded");
-    }
-
-    async waitForLoaderToDisappear(timeout = 10000): Promise<void> {
-        const spinner = this.loaderSpinner;
-
-        if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
-            console.log("⏳ Waiting for loading spinner to disappear");
-            await spinner.waitFor({ state: "hidden", timeout });
-            console.log("✅ Loading spinner disappeared");
-        }
-    }
-
     protected toAbsoluteUrl(pathOrUrl: string): string {
         if (pathOrUrl.startsWith("http")) {
             return pathOrUrl;
@@ -95,6 +81,45 @@ export abstract class BasePage {
         }
 
         return `${baseUrl}${pathOrUrl}`;
+    }
+
+    /**
+     * Waits until the page is considered ready for interaction.
+     *
+     * Combines:
+     * - loader disappearance (if present)
+     * - SPA micro-settle
+     * - optional deterministic ready locator
+     */
+    protected async waitForPageReady(options?: {
+        readyLocator?: Locator;
+        timeout?: number;
+    }): Promise<void> {
+        const timeout = options?.timeout ?? 10000;
+
+        // 1️⃣ App-specific async (spinner)
+        await this.waitForLoaderToDisappear(timeout);
+
+        // 2️⃣ SPA noise (safe polish)
+        await this.bestEffortSpaSettle(timeout);
+
+        // 3️⃣ Deterministic signal (gold standard)
+        if (options?.readyLocator) {
+            await options.readyLocator.waitFor({
+                state: "visible",
+                timeout,
+            });
+        }
+    }
+
+    async waitForLoaderToDisappear(timeout = 10000): Promise<void> {
+        const spinner = this.loaderSpinner;
+
+        if (await spinner.isVisible({ timeout: 1000 }).catch(() => false)) {
+            console.log("⏳ Waiting for loading spinner to disappear");
+            await spinner.waitFor({ state: "hidden", timeout });
+            console.log("✅ Loading spinner disappeared");
+        }
     }
 
     protected async bestEffortSpaSettle(timeout: number): Promise<void> {

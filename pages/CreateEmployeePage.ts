@@ -104,6 +104,5 @@ export class CreateEmployeePage extends BasePage {
      */
     async clickSave(): Promise<void> {
         await this.actions.click(this.saveButton, "Save button");
-        await this.waitForLoaderToDisappear();
     }
 }

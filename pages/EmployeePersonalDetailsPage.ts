@@ -4,7 +4,7 @@ import { pageTitleValues } from "../constants/AppConstants";
 
 export class EmployeePersonalDetailsPage extends BasePage {
     // required fields
-    private readonly driverLicenceNumberField: Locator;
+    private readonly driverLicenceNumberField: string;
     private readonly licenceExpiryDate: Locator;
     private readonly nationalityDropdown: string;
     private readonly maritalStatusDropdown: string;
@@ -19,22 +19,22 @@ export class EmployeePersonalDetailsPage extends BasePage {
 
     constructor(page: Page) {
         super(page);
-        this.driverLicenceNumberField = page
-            .locator("//input[contains(@class,'oxd-input--active')]")
-            .nth(6);
-        this.licenceExpiryDate = page
-            .locator("//input[contains(@class,'oxd-input--active')]")
-            .nth(7);
+        this.driverLicenceNumberField = "Driver's License Number";
+        this.licenceExpiryDate = page.locator(
+            "//label[normalize-space()='License Expiry Date']/ancestor::div[2]//input[contains(@class,'oxd-input--active')]",
+        );
         this.nationalityDropdown = "Nationality";
         this.maritalStatusDropdown = "Marital Status";
-        this.dateOfBirthField = page
-            .locator("//input[contains(@class,'oxd-input--active')]")
-            .nth(8);
+        this.dateOfBirthField = page.locator(
+            "//label[normalize-space()='Date of Birth']/ancestor::div[2]//input[contains(@class,'oxd-input--active')]",
+        );
         this.genderMaleCheckbox = page.locator(".oxd-radio-wrapper").first();
         this.genderFemaleCheckbox = page.locator("input[type='radio']").last();
         this.requiredSaveButton = page.locator("//button[normalize-space()='Save']").first();
         this.bloodTypeDropdown = "Blood Type";
-        this.testField = page.locator("//input[contains(@class,'oxd-input--active')]").nth(9);
+        this.testField = page.locator(
+            "//label[normalize-space()='Test_Field']/ancestor::div[2]//input[contains(@class,'oxd-input--active')]",
+        );
         this.customsaveButton = page.locator("//button[normalize-space()='Save']").last();
     }
 
@@ -46,12 +46,19 @@ export class EmployeePersonalDetailsPage extends BasePage {
         await this.isAtPageWithTitle(pageTitleValues.employeesTitle);
     }
 
+    getInputByLabel(label: string) {
+        return this.page.locator(
+            `//label[normalize-space()="${label}"]/ancestor::div[2]/*[2]/*/*/input`,
+        );
+    }
+
     /**
      * Fills the Drivers licence input field.
      */
     async fillDriverLicence(driversLicence: string): Promise<void> {
+        await this.waitForPageReady({ readyLocator: this.customsaveButton, timeout: 10000 });
         await this.actions.fill(
-            this.driverLicenceNumberField,
+            this.getInputByLabel(this.driverLicenceNumberField),
             driversLicence,
             "Drivers licence input",
         );
