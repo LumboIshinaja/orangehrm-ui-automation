@@ -57,9 +57,8 @@ export class EmployeeHelper {
         // STEP 2: Personal details
         await this.employeePersDetPage.isAt();
 
-        await this.employeePersDetPage.fillDriverLicence(data.driverLicenceNumber);
-
         await this.employeePersDetPage.fillLicenceExpiryDate(data.licenceExpiryDate);
+        await this.employeePersDetPage.fillDriverLicence(data.driverLicenceNumber);
 
         // Hardcoded reference dropdowns
         await this.employeePersDetPage.selectNationality("Serbian");
