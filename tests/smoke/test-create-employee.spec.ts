@@ -15,5 +15,17 @@ test.describe("Employee management", () => {
         await test.step("Create new employee", async () => {
             await employeeHelper.createEmployee(employee);
         });
+
+        await test.step("Navigate user to Employee List page", async () => {
+            await employeeHelper.navigateToEmployeeList();
+        });
+
+        await test.step("Validate created employee", async () => {
+            await employeeHelper.validateEmployeeSearchResult(
+                employee.firstName,
+                `${employee.firstName} ${employee.middleName}`,
+                employee.lastName,
+            );
+        });
     });
 });

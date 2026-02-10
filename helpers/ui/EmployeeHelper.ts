@@ -3,6 +3,7 @@ import { PageObjectManager } from "../../managers/PageObjectManager";
 import { EmployeesPage } from "../../pages/EmployeesPage";
 import { CreateEmployeePage } from "../../pages/CreateEmployeePage";
 import { EmployeePersonalDetailsPage } from "../../pages/EmployeePersonalDetailsPage";
+import { Assertions } from "../../assertions/Assertions";
 
 export type CreateEmployeeData = {
     firstName: string;
@@ -33,6 +34,12 @@ export class EmployeeHelper {
         await this.employeesPage.isAt();
     }
 
+    /**
+     * Creates a new employee via the OrangeHRM UI.
+     *
+     * @param data - Object containing employee creation data
+     *               (names, username, password).
+     */
     async createEmployee(data: CreateEmployeeData): Promise<void> {
         console.log("👤 Starting create employee flow");
 
@@ -65,5 +72,37 @@ export class EmployeeHelper {
         await this.employeePersDetPage.clickCustomSave();
 
         console.log("✅ Employee creation flow completed");
+    }
+
+    /**
+     * This method validates that the employee search result matches the expected employee data.
+     *
+     * @param expectedFirstName - Expected employee first name (used for search).
+     * @param expectedMiddleName - Expected employee middle name.
+     * @param expectedLastName - Expected employee last name.
+     */
+    async validateEmployeeSearchResult(
+        expectedFirstName: string,
+        expectedMiddleName: string,
+        expectedLastName: string,
+    ): Promise<void> {
+        console.log("🔍 Validating employee search result");
+
+        await this.employeesPage.fillEmployeeName(expectedFirstName);
+        await this.employeesPage.clickSearchEmployee();
+
+        const actualMiddleName = await this.employeesPage.getEmployeeMiddleNameFromResult();
+
+        console.log(
+            `🔎 Middle name → expected: "${expectedMiddleName}", actual: "${actualMiddleName}"`,
+        );
+        Assertions.expectNormalizedText(actualMiddleName, expectedMiddleName);
+
+        const actualLastName = await this.employeesPage.getEmployeeLastNameFromResult();
+
+        console.log(`🔎 Last name → expected: "${expectedLastName}", actual: "${actualLastName}"`);
+        Assertions.expectNormalizedText(actualLastName, expectedLastName);
+
+        console.log("✅ Employee search result validation passed");
     }
 }

@@ -6,11 +6,17 @@ import { pageTitleValues } from "../constants/AppConstants";
 export class EmployeesPage extends BasePage {
     private readonly employeeNameField: Locator;
     private readonly addEmployeeButton: Locator;
+    private readonly searchButton: Locator;
+    private readonly tableFirstMiddleNameCell: Locator;
+    private readonly tableLastNameCell: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.employeeNameField = page.locator(".oxd-autocomplete-text-input").first();
+        this.employeeNameField = page.locator(".oxd-autocomplete-text-input input").first();
         this.addEmployeeButton = page.locator("button.oxd-button--secondary[type='button']");
+        this.searchButton = page.locator("//button[contains(., 'Search')]");
+        this.tableFirstMiddleNameCell = page.locator(".oxd-table-cell.oxd-padding-cell").nth(2);
+        this.tableLastNameCell = page.locator(".oxd-table-cell.oxd-padding-cell").nth(3);
     }
 
     /**
@@ -40,5 +46,24 @@ export class EmployeesPage extends BasePage {
      */
     async clickAddEmployee(): Promise<void> {
         await this.actions.click(this.addEmployeeButton, "Add employee button");
+    }
+
+    /**
+     * Clicks the Search employee button.
+     */
+    async clickSearchEmployee(): Promise<void> {
+        await this.actions.click(this.searchButton, "Search employee button");
+        await this.waitForLoaderToDisappear();
+    }
+
+    async getEmployeeMiddleNameFromResult(): Promise<string> {
+        return await this.actions.getText(
+            this.tableFirstMiddleNameCell,
+            "Employee middle name cell",
+        );
+    }
+
+    async getEmployeeLastNameFromResult(): Promise<string> {
+        return await this.actions.getText(this.tableLastNameCell, "Employee last name cell");
     }
 }

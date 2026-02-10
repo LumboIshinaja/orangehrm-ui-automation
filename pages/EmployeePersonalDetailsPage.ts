@@ -132,5 +132,6 @@ export class EmployeePersonalDetailsPage extends BasePage {
      */
     async clickCustomSave(): Promise<void> {
         await this.actions.click(this.customsaveButton, "Custom Save button");
+        await this.waitForLoaderToDisappear();
     }
 }
