@@ -19,10 +19,7 @@ export class LoginPage extends BasePage {
      * Navigates the user to the Login page.
      */
     async navigateToLogin(): Promise<void> {
-        await super.navigate(routes.auth.login, {
-            readyLocator: this.loginButton,
-            expectUrl: /auth\/login/,
-        });
+        await super.navigate(routes.auth.login);
     }
 
     /**

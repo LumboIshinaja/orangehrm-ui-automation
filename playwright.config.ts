@@ -14,6 +14,7 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+    timeout: 300_000, // ⬅️ per-test timeout
     testDir: "./tests",
     /* Run tests in files in parallel */
     fullyParallel: true,

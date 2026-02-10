@@ -1,10 +1,14 @@
-const WEB_ROOT = "/web/index.php";
-
 export const routes = {
     auth: {
-        login: `${WEB_ROOT}/auth/login`,
+        login: "/auth/login",
     },
+
     dashboard: {
-        overview: `${WEB_ROOT}/dashboard/index`,
+        overview: "/dashboard/index",
+    },
+
+    pim: {
+        employeeList: "/pim/viewEmployeeList",
+        addEmployee: "/pim/addEmployee",
     },
 } as const;
