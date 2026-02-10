@@ -44,23 +44,14 @@ export class EmployeePersonalDetailsPage extends BasePage {
      * This method verifies if user is on correct page
      */
     async isAt(): Promise<void> {
-        await this.waitForPageReady({
-            readyLocator: this.genderMaleCheckbox,
-        });
+        await this.waitForPageReady(this.driverLicenceNumberField, 25000);
         await this.isAtPageWithTitle(pageTitleValues.employeesTitle);
-    }
-
-    getInputByLabel(label: string) {
-        return this.page.locator(
-            `//label[normalize-space()="${label}"]/ancestor::div[2]/*[2]/*/*/input`,
-        );
     }
 
     /**
      * Fills the Drivers licence input field.
      */
     async fillDriverLicence(driversLicence: string): Promise<void> {
-        await this.waitForPageReady({ readyLocator: this.customsaveButton, timeout: 10000 });
         await this.actions.fill(
             this.driverLicenceNumberField,
             driversLicence,
@@ -72,6 +63,7 @@ export class EmployeePersonalDetailsPage extends BasePage {
      * Fills the Licence expiry date input field.
      */
     async fillLicenceExpiryDate(licenceExpiryDate: string): Promise<void> {
+        await this.actions.click(this.licenceExpiryDate, "Clicking the field");
         await this.actions.fill(
             this.licenceExpiryDate,
             licenceExpiryDate,

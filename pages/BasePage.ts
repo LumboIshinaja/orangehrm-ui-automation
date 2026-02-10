@@ -89,14 +89,12 @@ export abstract class BasePage {
      * Combines:
      * - loader disappearance (if present)
      * - SPA micro-settle
-     * - optional deterministic ready locator
+     * - deterministic ready locator (mandatory)
      */
-    protected async waitForPageReady(options?: {
-        readyLocator?: Locator;
-        timeout?: number;
-    }): Promise<void> {
-        const timeout = options?.timeout ?? 10000;
-
+    protected async waitForPageReady(
+        readyLocator: Locator,
+        timeout: number = 15000,
+    ): Promise<void> {
         // 1️⃣ App-specific async (spinner)
         await this.waitForLoaderToDisappear(timeout);
 
@@ -104,12 +102,14 @@ export abstract class BasePage {
         await this.bestEffortSpaSettle(timeout);
 
         // 3️⃣ Deterministic signal (gold standard)
-        if (options?.readyLocator) {
-            await options.readyLocator.waitFor({
-                state: "visible",
-                timeout,
-            });
-        }
+        console.log(`➡️ Waiting for element with locator ${readyLocator} to become visible`);
+
+        await readyLocator.waitFor({
+            state: "visible",
+            timeout,
+        });
+
+        console.log(`✅ Element with locator ${readyLocator} visible`);
     }
 
     async waitForLoaderToDisappear(timeout = 10000): Promise<void> {

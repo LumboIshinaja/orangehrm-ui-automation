@@ -44,18 +44,20 @@ export class BaseActions {
      * @param locator - Locator of the input element.
      * @param value - Value to be entered into the input field.
      * @param elementName - Human-readable name of the element for logging.
-     * @typingDelay - Default value at 30
+     * @param typingDelay - Delay between keystrokes (default: 30ms).
+     * @param timeout - Max time to wait for element visibility (default: 10000ms).
      */
     async fill(
         locator: Locator,
         value: string,
         elementName: string,
-        typingDelay = 30,
+        typingDelay: number = 30,
+        timeout: number = 5000,
     ): Promise<void> {
         try {
             console.log(`➡️ Filling [${elementName}]`);
 
-            await this.waitForVisibility(locator);
+            await this.waitForVisibility(locator, timeout);
 
             await locator.click({ force: true });
             await locator.clear();

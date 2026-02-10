@@ -44,6 +44,7 @@ export class CreateEmployeePage extends BasePage {
      */
     async navigateToAddEmployee(): Promise<void> {
         await super.navigate(routes.pim.addEmployee);
+        await super.waitForPageReady(this.firstNameField);
     }
 
     /**

@@ -10,10 +10,6 @@ export type CreateEmployeeData = {
     lastName: string;
     username: string;
     password: string;
-    driverLicenceNumber: string;
-    licenceExpiryDate: string;
-    dateOfBirth: string;
-    testField: string;
 };
 
 export class EmployeeHelper {
@@ -57,26 +53,14 @@ export class EmployeeHelper {
         // STEP 2: Personal details
         await this.employeePersDetPage.isAt();
 
-        await this.employeePersDetPage.fillLicenceExpiryDate(data.licenceExpiryDate);
-        await this.employeePersDetPage.fillDriverLicence(data.driverLicenceNumber);
-
-        // Hardcoded reference dropdowns
         await this.employeePersDetPage.selectNationality("Serbian");
         await this.employeePersDetPage.selectMaritalStatus("Married");
-
-        if (data.dateOfBirth) {
-            await this.employeePersDetPage.fillDateOfBirth(data.dateOfBirth);
-        }
 
         await this.employeePersDetPage.clickMaleCheckbox();
         await this.employeePersDetPage.clickRequiredSave();
 
         // STEP 3: Custom fields
         await this.employeePersDetPage.selectBloodType("B-");
-
-        if (data.testField) {
-            await this.employeePersDetPage.fillTestField(data.testField);
-        }
 
         await this.employeePersDetPage.clickCustomSave();
 
